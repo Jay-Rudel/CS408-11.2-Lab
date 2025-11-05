@@ -1,113 +1,99 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Test AWS Lambda</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="/css/style.css">
+    </head>
 
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Test AWS Lambda</title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="/css/style.css">
-</head>
+    <body>
+        <!-- The below is a full table to that will store all incoming data. -->
+        <h1>Random Super Popular Store - SuperUser Logged in</h1>
+        <h2>Store #7125 Database of items</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Id</th><th>Name</th><th>Price</th><th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="TableData">
+                <tr>
+                    <td colspan="4">ERROR: Missing Data</td>
+                </tr>
+            </tbody>
+        </table>
 
-<body>
+        <!-- Below is the input form that you can use to add new data to the table. --->
+        <hr>
+        <h3>Add New items to the DataBase</h3>
+        <form id="itemForm">
+            <input id="newID" placeholder="ID" required />
+            <input id="newProduct" placeholder="Product Name" required/>
+            <input id="newPrice" type="number" placeholder="Product Price" required/>
+            <button type="submit">Add New Product</button>
+        </form>
 
-        <h1>Simple Demo for PUT, GET, and DELETE</h1>
-    <p id="lambda-info">
-        <!-- loaded with AJAX -->
-    </p>
+        <!-- Below is the script for this page to function -->
+        <script>
+            // This is the server connection for my API
+            const serverLocation = "https://mu7w9u3n75.execute-api.us-east-2.amazonaws.com/items";
 
-    <!-- The below is a full table to that will store all incoming data. -->
-    <h1>Random Super Popular Store - SuperUser Logged in</h1>
-    <h2>Store #7125 Database of items</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Id</th><th>Name</th><th>Price</th><th>Actions</th>
-            </tr>
-        </thead>
-        <tbody id="TableData">
-            <tr>
-                <td colspan="4">Missing Data</td>
-            </tr>
-        </tbody>
-    </table>
+            function loadItems(){
+                // Connecting with the database
+                fetch(serverLocation)
+                .then(res => res.json())
+                .then(data => {
 
-    <!-- Below is the input form that you can use to add new data to the table. --->
-    <hr>
-    <h3>Add New items to the DataBase</h3>
-    <form id="itemForm">
-        <input id="newID" placeholder="ID" required />
-        <input id="newProduct" placeholder="Product Name" required/>
-        <input id="newPrice" type="number" placeholder="Product Price" required/>
-        <button type="submit">Add New Product</button>
-    </form>
+                const table = document.getElementById("TableData");
 
+                // Checking to see if there is data for us to display
+                if (data.length === 0) {
+                    table.innerHTML = '<tr><td colspan="4">There is no data to display</td></tr>';
+                    return;
+                }
 
+                table.innerHTML = "";
 
+                // Checking each item and then adding them to the table.
+                data.forEach(item => {
+                    const row = `<tr>
+                                    <td>${item.id}</td>
+                                    <td>${item.name}</td>
+                                    <td>${item.price}</td>
+                                    <td><button class="btn" onclick="deleteItem('${item.id}')">Delete</button></td>
+                                </tr>`;
 
-    <script>
-        const serverLocation = "https://mu7w9u3n75.execute-api.us-east-2.amazonaws.com/items";
+                    table.innerHTML += row;
+                });}); // Cleaning all the closing brackets.
+            }
 
-        function loadItems(){
+            // The following is how a new item is added to the table;
+            document.getElementById("itemForm").onsubmit = function(e){
+                e.preventDefault(); 
 
-        }
+                // The three values that we want to add to the database
+                const id = document.getElementById("newID").value;
+                const name = document.getElementById("newProduct").value;
+                const price = Number(document.getElementById("newPrice").value);
 
-        function addItems(){
-            fetch()
+                // Connecting and putting them into the database
+                fetch(serverLocation, {
+                    method : "PUT",
+                    headers : {"Content-Type": "application/json"},
+                    body : JSON.stringify({id, name, price})
+                }).then(() => loadItems());
+            };
+
+            // The following function is used to delete a new item
+            function deleteItem(id){
+                fetch(`${serverLocation}/${id}`, {method: "DELETE"}).then(() => loadItems());
+            }
+
+            // Very first load
             loadItems();
-        }
-
-        function deleteItem(id){
-            fetch(`${serverLocation}/${id}`, {method: "DELETE"}).then(() => loadItems());
-        }
-
-        // Very first load
-        loadItems();
-    </script>
-
-    <hr>
-    <button id="send-data">Send Data</button>
-    <p>Sends an example JSON object to the server with id 11111</p>
-    <script>
-        document.getElementById("send-data").onclick = function () {
-            let xhr = new XMLHttpRequest();
-            xhr.open("PUT", "https://mu7w9u3n75.execute-api.us-east-2.amazonaws.com/items");
-            xhr.setRequestHeader("Content-Type", "application/json");
-            xhr.send(JSON.stringify({
-                "id": "3333",
-                "price": 19,
-                "name": "test put value"
-            }));
-        }
-    </script>
-
-    <button id="load-data">Load Data</button>
-    <p>Loads data from the server</p>
-    <script>
-        document.getElementById("load-data").onclick = function () {
-            let lambda = document.getElementById("lambda-info");
-            let xhr = new XMLHttpRequest();
-            xhr.addEventListener("load", function () {
-                lambda.innerHTML = xhr.response;
-            });
-            xhr.open("GET", "https://mu7w9u3n75.execute-api.us-east-2.amazonaws.com/items");
-            xhr.send();
-        }
-
-    </script>
-
-    <hr>
-    <button id="delete-data">Delete Data</button>
-    <p>Deletes a JSON object from the server with 11111</p>
-    <script>
-        document.getElementById("delete-data").onclick = function () {
-            let xhr = new XMLHttpRequest();
-            xhr.open("DELETE", "https://mu7w9u3n75.execute-api.us-east-2.amazonaws.com/items/3333");
-            xhr.setRequestHeader("Content-Type", "application/json");
-            xhr.send();
-        }
-    </script>
-</body>
-
+        </script>
+    </body>
 </html>
