@@ -11,10 +11,60 @@
 </head>
 
 <body>
-    <h1>Simple Demo for PUT, GET, and DELETE</h1>
+
+        <h1>Simple Demo for PUT, GET, and DELETE</h1>
     <p id="lambda-info">
         <!-- loaded with AJAX -->
     </p>
+
+    <!-- The below is a full table to that will store all incoming data. -->
+    <h1>Random Super Popular Store - SuperUser Logged in</h1>
+    <h2>Store #7125 Database of items</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th><th>Name</th><th>Price</th><th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="TableData">
+            <tr>
+                <td colspan="4">Missing Data</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Below is the input form that you can use to add new data to the table. --->
+    <hr>
+    <h3>Add New items to the DataBase</h3>
+    <form id="itemForm">
+        <input id="newID" placeholder="ID" required />
+        <input id="newProduct" placeholder="Product Name" required/>
+        <input id="newPrice" type="number" placeholder="Product Price" required/>
+        <button type="submit">Add New Product</button>
+    </form>
+
+
+
+
+    <script>
+        const serverLocation = "https://mu7w9u3n75.execute-api.us-east-2.amazonaws.com/items";
+
+        function loadItems(){
+
+        }
+
+        function addItems(){
+            fetch()
+            loadItems();
+        }
+
+        function deleteItem(id){
+            fetch(`${serverLocation}/${id}`, {method: "DELETE"}).then(() => loadItems());
+        }
+
+        // Very first load
+        loadItems();
+    </script>
 
     <hr>
     <button id="send-data">Send Data</button>
@@ -25,7 +75,7 @@
             xhr.open("PUT", "https://mu7w9u3n75.execute-api.us-east-2.amazonaws.com/items");
             xhr.setRequestHeader("Content-Type", "application/json");
             xhr.send(JSON.stringify({
-                "id": "6666666",
+                "id": "3333",
                 "price": 19,
                 "name": "test put value"
             }));
@@ -53,7 +103,7 @@
     <script>
         document.getElementById("delete-data").onclick = function () {
             let xhr = new XMLHttpRequest();
-            xhr.open("DELETE", "https://mu7w9u3n75.execute-api.us-east-2.amazonaws.com/items/6666666");
+            xhr.open("DELETE", "https://mu7w9u3n75.execute-api.us-east-2.amazonaws.com/items/3333");
             xhr.setRequestHeader("Content-Type", "application/json");
             xhr.send();
         }
