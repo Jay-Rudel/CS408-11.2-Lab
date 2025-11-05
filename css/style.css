@@ -1,4 +1,56 @@
 h1{
-  border-color: #d3e644;
-  border-style: dashed;
+  border: dashed white 3px;
+  border-radius: 4px;
+  padding: 3px;
+  text-align: center
+}
+
+.btn {
+  color: white;
+  background-color: gray;
+  text-align: center;
+  max-width: fit-content;
+}
+
+table {
+  margin: 0 auto; /* Just moves the center */
+  padding: 3px;
+  min-width: auto;
+  border: solid white 1px;
+  border-radius: 3px;
+  border-collapse: collapse;
+}
+
+tr {
+  text-align: center;
+  min-width: auto;
+}
+
+th {
+  padding: 5px; 
+}
+
+td {
+  border: solid white 1px;
+}
+
+body {
+  text-align: center;
+  background-color: black;
+  color: white;
+  margin: 7px;
+}
+
+form{
+  margin: 0 auto; /* Just moves the center */
+  border: solid white 1px;
+  border-radius: 3px;
+  padding: 3px;
+  width: fit-content;
+  text-align: center;
+}
+
+form input{
+  padding: 1px;
+  margin: 0.6px;
 }
